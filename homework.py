@@ -19,7 +19,7 @@ bot = telegram.Bot(TELEGRAM_TOKEN)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 logging.basicConfig(
-        filename=__file__ + '.log',
+        filename='main.log',
         level=logging.DEBUG,
         filemode='w',
         format='%(asctime)s, %(levelname)s, %(message)s, %(name)s'
