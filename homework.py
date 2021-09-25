@@ -19,15 +19,13 @@ bot = telegram.Bot(TELEGRAM_TOKEN)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 logging.basicConfig(
-        filename='main.log',
-        level=logging.DEBUG,
-        filemode='w',
-        format='%(asctime)s, %(levelname)s, %(message)s, %(name)s'
-    )
+    filename='main.log',
+    level=logging.DEBUG,
+    filemode='w',
+    format='%(asctime)s, %(levelname)s, %(message)s, %(name)s'
+)
 handler = logging.StreamHandler()
 logger.addHandler(handler)
-
-
 
 def parse_homework_status(homework):
     homework_name = homework.get('homework_name')
@@ -62,7 +60,11 @@ def main():
         try:
             try_get_homework = get_homeworks(current_timestamp)
             if try_get_homework.get('homeworks'):
-                send_message(parse_homework_status(try_get_homework.get('homeworks')[0]))
+                send_message(
+                    parse_homework_status(
+                        try_get_homework.get('homeworks')[0]
+                        )
+                    )
             current_timestamp = try_get_homework.get('current_date')
             time.sleep(5 * 60)
         except Exception as e:
