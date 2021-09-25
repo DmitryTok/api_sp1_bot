@@ -27,6 +27,7 @@ logging.basicConfig(
 handler = logging.StreamHandler()
 logger.addHandler(handler)
 
+
 def parse_homework_status(homework):
     homework_name = homework.get('homework_name')
     homework_status = homework.get('status')
@@ -62,9 +63,7 @@ def main():
             if try_get_homework.get('homeworks'):
                 send_message(
                     parse_homework_status(
-                        try_get_homework.get('homeworks')[0]
-                        )
-                    )
+                        try_get_homework.get('homeworks')[0]))
             current_timestamp = try_get_homework.get('current_date')
             time.sleep(5 * 60)
         except Exception as e:
