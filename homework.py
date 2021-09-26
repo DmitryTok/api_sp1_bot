@@ -19,35 +19,40 @@ bot = telegram.Bot(TELEGRAM_TOKEN)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 logging.basicConfig(
-    filename='main.log',
+    handlers=[logging.StreamHandler()],
     level=logging.DEBUG,
-    filemode='w',
     format='%(asctime)s, %(levelname)s, %(message)s, %(name)s'
 )
-handler = logging.StreamHandler()
-logger.addHandler(handler)
-
 
 def parse_homework_status(homework):
     homework_name = homework.get('homework_name')
     homework_status = homework.get('status')
-    if homework_status == 'reviewing':
-        verdict = 'Работа взята в ревью'
-    elif homework_status == 'rejected':
-        verdict = 'К сожалению, в работе нашлись ошибки.'
-    else:
-        verdict = 'Ревьюеру всё понравилось, работа зачтена!'
-    return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
+    try:
+        if homework_status == 'reviewing':
+            verdict = 'Работа взята в ревью'
+        elif homework_status == 'rejected':
+            verdict = 'К сожалению, в работе нашлись ошибки.'
+        else:
+            verdict = 'Ревьюеру всё понравилось, работа зачтена!'
+        return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
+    except requests.RequestException as e:
+        raise ConnectionError(
+            logging.error(e, exc_info=True),
+            print(f'Неверный ответ сервера: {e}'))
 
 
 def get_homeworks(current_timestamp):
-    URL = 'https://praktikum.yandex.ru/api/user_api/homework_statuses'
-    if current_timestamp is None:
-        current_timestamp = int(time.time())
+    URL = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
+    current_timestamp = time or None
     headers = {'Authorization': f'OAuth {PRAKTIKUM_TOKEN}'}
     payload = {'from_date': current_timestamp}
-    homework_statuses = requests.get(URL, headers=headers, params=payload)
-    return homework_statuses.json()
+    try:
+        homework_statuses = requests.get(URL, headers=headers, params=payload)
+        return homework_statuses.json()
+    except requests.RequestException as e:
+        raise ConnectionError(
+            logging.error(e, exc_info=True),
+            print(f'Неверный ответ сервера: {e}'))
 
 
 def send_message(message):
