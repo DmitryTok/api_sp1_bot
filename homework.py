@@ -24,6 +24,7 @@ logging.basicConfig(
     format='%(asctime)s, %(levelname)s, %(message)s, %(name)s'
 )
 
+
 def parse_homework_status(homework):
     homework_name = homework.get('homework_name')
     homework_status = homework.get('status')
