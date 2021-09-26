@@ -43,8 +43,9 @@ def parse_homework_status(homework):
 
 
 def get_homeworks(current_timestamp):
-    URL = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
-    current_timestamp = time or None
+    URL = 'https://praktikum.yandex.ru/api/user_api/homework_statuses'
+    if current_timestamp is None:
+        current_timestamp = time or None
     headers = {'Authorization': f'OAuth {PRAKTIKUM_TOKEN}'}
     payload = {'from_date': current_timestamp}
     try:
