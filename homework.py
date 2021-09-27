@@ -1,6 +1,7 @@
 import logging
 import os
 import time
+from typing import Callable
 
 import requests
 import telegram
@@ -14,6 +15,12 @@ TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 
 CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
+PRACRIKUM_STATUS = {
+    'reviewing': 'Работа взята в ревью',
+    'rejected': 'К сожалению, в работе нашлись ошибки.',
+    'approved': 'Ревьюеру всё понравилось, работа зачтена!',
+}
+
 bot = telegram.Bot(TELEGRAM_TOKEN)
 
 logger = logging.getLogger(__name__)
@@ -26,26 +33,24 @@ logging.basicConfig(
 
 
 def parse_homework_status(homework):
-    homework_name = homework.get('homework_name')
-    homework_status = homework.get('status')
     try:
-        if homework_status == 'reviewing':
-            verdict = 'Работа взята в ревью'
-        elif homework_status == 'rejected':
-            verdict = 'К сожалению, в работе нашлись ошибки.'
-        else:
-            verdict = 'Ревьюеру всё понравилось, работа зачтена!'
+        homework_name = homework.get('homework_name')
+        if homework_name is None:
+            return logging.error('Ошибка запроса')
+        homework_status = homework.get('status')
+        if homework_status in PRACRIKUM_STATUS:
+            verdict = PRACRIKUM_STATUS[homework_status]
         return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
-    except requests.RequestException as e:
-        raise ConnectionError(
+    except Exception as e:
+        raise ValueError(
             logging.error(e, exc_info=True),
             print(f'Неверный ответ сервера: {e}'))
 
-
 def get_homeworks(current_timestamp):
     URL = 'https://praktikum.yandex.ru/api/user_api/homework_statuses'
+    #Тесты не пропускают вариант current_timestamp = int(time.time()) or None
     if current_timestamp is None:
-        current_timestamp = time or None
+        current_timestamp = int(time.time())
     headers = {'Authorization': f'OAuth {PRAKTIKUM_TOKEN}'}
     payload = {'from_date': current_timestamp}
     try:
