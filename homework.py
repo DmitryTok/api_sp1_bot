@@ -48,7 +48,7 @@ def parse_homework_status(homework):
 
 def get_homeworks(current_timestamp):
     URL = 'https://praktikum.yandex.ru/api/user_api/homework_statuses'
-    """Тесты не пропускают вариант 
+    """Тесты не пропускают вариант
        current_timestamp = int(time.time()) or None
     """
     if current_timestamp is None:
