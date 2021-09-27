@@ -1,7 +1,6 @@
 import logging
 import os
 import time
-from typing import Callable
 
 import requests
 import telegram
@@ -46,9 +45,12 @@ def parse_homework_status(homework):
             logging.error(e, exc_info=True),
             print(f'Неверный ответ сервера: {e}'))
 
+
 def get_homeworks(current_timestamp):
     URL = 'https://praktikum.yandex.ru/api/user_api/homework_statuses'
-    #Тесты не пропускают вариант current_timestamp = int(time.time()) or None
+    """Тесты не пропускают вариант 
+       current_timestamp = int(time.time()) or None
+    """
     if current_timestamp is None:
         current_timestamp = int(time.time())
     headers = {'Authorization': f'OAuth {PRAKTIKUM_TOKEN}'}
