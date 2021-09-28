@@ -14,8 +14,10 @@ TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 
 CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
+PRAKTIKUM_NAMES = (None, '')
+
 PRACRIKUM_STATUS = {
-    'reviewing': 'Работа взята в ревью',
+    'reviewing': 'Работа взята на ревью',
     'rejected': 'К сожалению, в работе нашлись ошибки.',
     'approved': 'Ревьюеру всё понравилось, работа зачтена!',
 }
@@ -32,26 +34,20 @@ logging.basicConfig(
 
 
 def parse_homework_status(homework):
-    try:
-        homework_name = homework.get('homework_name')
-        if homework_name is None:
-            return logging.error('Ошибка запроса')
-        homework_status = homework.get('status')
-        if homework_status in PRACRIKUM_STATUS:
-            verdict = PRACRIKUM_STATUS[homework_status]
-        return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
-    except Exception as e:
-        raise ValueError(
-            logging.error(e, exc_info=True),
-            print(f'Неверный ответ сервера: {e}'))
+    homework_name = homework.get('homework_name')
+    if homework_name in PRAKTIKUM_NAMES:
+        return logging.error('Ошибка запроса')
+    homework_status = homework.get('status')
+    if homework_status in PRACRIKUM_STATUS:
+        verdict = PRACRIKUM_STATUS[homework_status]
+    else:
+        return logging.error('Неверный ответ сервера')
+    return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
 
 
 def get_homeworks(current_timestamp):
     URL = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
-    """Тесты не пропускают вариант
-       current_timestamp = int(time.time()) or None
-    """
-    if current_timestamp is None:
+    if current_timestamp is None: 
         current_timestamp = int(time.time())
     headers = {'Authorization': f'OAuth {PRAKTIKUM_TOKEN}'}
     payload = {'from_date': current_timestamp}
