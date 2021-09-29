@@ -42,7 +42,7 @@ def parse_homework_status(homework):
         verdict = PRACRIKUM_STATUS[homework_status]
     else:
         return logging.error('Неверный ответ сервера')
-    return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
+    return f'Вашу работу проверили "{homework_name}"!\n\n{verdict}'
 
 
 def get_homeworks(current_timestamp):
